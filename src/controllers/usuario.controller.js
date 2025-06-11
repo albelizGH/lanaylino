@@ -25,6 +25,45 @@ const obtenerDatosUsuario = async (req, res) => {
     }
 }
 
+const crearUsuario = async (req, res) => {
+    try{
+        const {
+            nombre,
+            apellido,
+            direccion,
+            email,
+            telefono,
+            rol,
+            password
+        } = req.body
+
+        const usuario = {
+            nombre,
+            apellido,
+            direccion,
+            password,
+            email,
+            telefono,
+            rol,
+        }
+
+        const connection = await getConnection();
+        const response = await connection.query("INSERT INTO usuario set ?",usuario)
+        if(response && response.affectedRows > 0){
+            res.json ({codigo: 200, mensaje: "Usuario registrado exitosamente", payload: [{id_usuario: response.insertId}]});
+        }
+        else{
+            res.json({codigo: -1, mensaje: "Error registrando usuario", payload: []});
+        }
+        
+    }
+    catch(error){
+        res.status(500);
+        res.send(error.message);
+    }
+}
+
+
 
 function verificarToken(req){
     const token = req.headers.authorization;
@@ -45,5 +84,6 @@ function verificarToken(req){
 }
 
 export const methods = {
-    obtenerDatosUsuario
+    obtenerDatosUsuario,
+    crearUsuario
 }
