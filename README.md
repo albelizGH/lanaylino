@@ -16,4 +16,31 @@ Servicios
         {
             nombre: string
         }
-    
+
+    . POST - /api/cargarProducto
+        body:
+        {
+            nombre: string
+            descripcion: string
+            precio: number
+            genero: string
+            id_categoria: number
+            imagen: string
+
+        }
+    .
+* Usuarios:
+    . POST - /api/registrarUsuario
+        body:
+        {
+            nombre: string
+            apellido: string
+            direccion: string
+            email: string
+            telefono: string
+            rol: string
+            password: password
+
+        }
+    . GET - /api/obtenerDatosUsuario/:id
+
