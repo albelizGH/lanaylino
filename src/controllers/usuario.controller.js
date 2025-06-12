@@ -25,6 +25,48 @@ const obtenerDatosUsuario = async (req, res) => {
     }
 }
 
+const modificarUsuario = async (req, res) => {
+    try{
+        const resultadoVerificar = verificarToken(req);
+        if(resultadoVerificar.estado == false){
+            return res.send({codigo: -1, mensaje: resultadoVerificar.error})
+        }
+        const { id } = req.params
+        const {
+            nombre,
+            apellido,
+            direccion,
+            email,
+            telefono,
+            rol,
+            password
+        } = req.body
+
+        const usuario = {
+            nombre,
+            apellido,
+            direccion,
+            password,
+            email,
+            telefono,
+            rol,
+        }
+        const connection = await getConnection();
+        const response = await connection.query("UPDATE usuario u SET ? where u.id_usuario = ?",[usuario,id]);
+        if(response.affectedRows > 0){
+            res.json({codigo: 200, mensaje:"OK", payload: []})
+        }
+        else{
+            res.json({codigo: -1, mensaje:"Error modificando datos del usuario", payload: []})
+        }
+
+    }
+    catch(error){
+            res.status(500);
+            res.send(error.message);
+    }
+}
+
 const crearUsuario = async (req, res) => {
     try{
         const {
@@ -85,5 +127,6 @@ function verificarToken(req){
 
 export const methods = {
     obtenerDatosUsuario,
-    crearUsuario
+    crearUsuario,
+    modificarUsuario
 }

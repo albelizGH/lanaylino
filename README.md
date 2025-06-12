@@ -44,3 +44,17 @@ Servicios
         }
     . GET - /api/obtenerDatosUsuario/:id
 
+    . POST - /api/modificarUsuario/:id
+    body:
+        {
+            nombre: string
+            apellido: string
+            direccion: string
+            email: string
+            telefono: string
+            rol: string
+            password: password
+
+        }
+    
+

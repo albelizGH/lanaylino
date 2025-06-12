@@ -10,7 +10,6 @@ const login = async (req, res) => {
         } = req.body
         const connection = await getConnection();
         const respuesta = await connection.query("SELECT id_usuario, nombre, apellido, rol  FROM usuario WHERE email = ? AND password = ?", [email, password]);
-        console.log(respuesta);
         const token = jwt.sign({
             sub: respuesta.id,
             name: respuesta.nombre,
