@@ -4,7 +4,7 @@ import { methods as usuarioController} from "./../controllers/usuario.controller
 
 const router = Router();
 
-router.get("/obtenerDatosUsuario", usuarioController.obtenerDatosUsuario)
+router.get("/obtenerDatosUsuario/:id", usuarioController.obtenerDatosUsuario)
 router.post("/registrarUsuario", usuarioController.crearUsuario)
 
 

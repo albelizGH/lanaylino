@@ -8,7 +8,7 @@ const obtenerDatosUsuario = async (req, res) => {
         if(resultadoVerificar.estado == false){
             return res.send({codigo: -1, mensaje: resultadoVerificar.error})
         }
-        const id = req.params
+        const id = req.params.id
         const connection = await getConnection();
         const response = await connection.query("SELECT * from usuario u where u.id_usuario = ?",id);
         if(response.length == 1){
