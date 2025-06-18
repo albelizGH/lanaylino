@@ -38,7 +38,7 @@ const cargarProducto = async (req, res) => {
             imagen
         }
         const connection = await getConnection();
-        const response = await connection.query("INSERT into producto set ?", producto);
+        const [response,metadata] = await connection.query("INSERT into producto set ?", producto);
         if(response && response.affectedRows > 0){
             res.json({
                 codigo: 200,
