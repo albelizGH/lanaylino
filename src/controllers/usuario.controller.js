@@ -10,7 +10,8 @@ const obtenerDatosUsuario = async (req, res) => {
         }
         const id = req.params.id
         const connection = await getConnection();
-        const response = await connection.query("SELECT * from usuario u where u.id_usuario = ?",id);
+        const [response,metadata] = await connection.query("SELECT * from usuario u where u.id_usuario = ?",id);
+        console.log(response);
         if(response.length == 1){
             res.json({codigo: 200, mensaje:"OK", payload: response})
         }
@@ -91,8 +92,8 @@ const crearUsuario = async (req, res) => {
 
         const connection = await getConnection();
         const response = await connection.query("INSERT INTO usuario set ?",usuario)
-        if(response && response.affectedRows > 0){
-            res.json ({codigo: 200, mensaje: "Usuario registrado exitosamente", payload: [{id_usuario: response.insertId}]});
+        if(response){
+            res.json ({codigo: 200, mensaje: "Usuario registrado exitosamente", payload: []});
         }
         else{
             res.json({codigo: -1, mensaje: "Error registrando usuario", payload: []});
@@ -108,12 +109,16 @@ const crearUsuario = async (req, res) => {
 
 
 function verificarToken(req){
-    const token = req.headers.authorization;
+    const typeToken = 'Bearer ';
+    const tokenRecibido = req.headers.authorization;
+    const token = req.headers.authorization && req.headers.authorization.startsWith(typeToken) ? req.headers.authorization.slice(typeToken.length) : null; 
+
     if(!token){
         return {estado: false, error: "Token no proporcionado"}
     }
     try{
         const payload = jwt.verify(token, secret);
+        console.log(payload);
         if(Date.now() > payload.exp){
             return {estado: false, error: "Token expirado"}
         }

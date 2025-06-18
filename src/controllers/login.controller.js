@@ -1,34 +1,54 @@
 import { getConnection } from "./../database/database";
-const jwt = require ("jsonwebtoken");
-const secret = process.env.SECRET
-//crear usuario
+const jwt = require("jsonwebtoken");
+const secret = process.env.SECRET;
+
+// Controlador de login corregido
 const login = async (req, res) => {
-    try{
-        const {
-            email,
-            password
-        } = req.body
+    try {
+        const { email, password } = req.body;
+
+        if (!email || !password) {
+            return res.status(400).json({ codigo: -1, mensaje: "El email y la contraseña son requeridos." });
+        }
+
         const connection = await getConnection();
-        const respuesta = await connection.query("SELECT id_usuario, nombre, apellido, rol  FROM usuario WHERE email = ? AND password = ?", [email, password]);
-        const token = jwt.sign({
-            sub: respuesta.id,
-            name: respuesta.nombre,
-            exp: Date.now() + 60 * 30000
-        }, secret);
-        console.log(token)
-        if(respuesta.length > 0){
-            console.log("se encontro el usuario")
-            res.json({codigo: 200, mensaje: "OK", payload: respuesta, jwt: token});
+        
+        // 1. Desestructura el resultado en [rows, fields]
+        const [data, metadata] = await connection.query("SELECT id_usuario, nombre, apellido, rol FROM usuario WHERE email = ? AND password = ?", [email, password]);
+
+        // 2. Verifica si se encontró un usuario (si el arreglo 'rows' tiene algo)
+        if (data.length > 0) {
+            console.log("Se encontró el usuario");
+            console.log(data);
+            
+            // 3. Obtén el objeto del usuario
+            const usuario = data[0];
+
+            // 4. Crea el token JWT con los datos correctos y una mejor expiración
+            const token = jwt.sign({
+                sub: usuario.id_usuario, 
+                name: usuario.nombre,   
+            }, secret, {
+                expiresIn: transformarTiempoASegundos(5), 
+            });
+            
+            console.log(token);
+
+            // 5. Envía solo el objeto del usuario en el payload
+            res.json({ codigo: 200, mensaje: "OK", payload: usuario, jwt: token });
+
+        } else {
+            console.log("Usuario no encontrado");
+            res.status(401).json({ codigo: -1, mensaje: "Usuario o contraseña incorrecta" }); 
         }
-        else{
-            console.log("usuario no encontrado")
-            res.json({codigo: -1, mensaje: "Usuario o contraseña incorrecta", payload: respuesta});
-        }
-    }
-    catch(error){
+    } catch (error) {
         res.status(500);
         res.send(error.message);
     }
+}
+
+function transformarTiempoASegundos(tiempoEnHoras){
+  return Date.now() + tiempoEnHoras * 3600;
 }
 
 // const resetearPassword = async(req, res) => {

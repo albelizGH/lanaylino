@@ -1,12 +1,13 @@
 import { config } from "dotenv";
 
 
-config();
-
+// config();
+require('dotenv').config();
+const DB_PASSWORD = process.env.DB_PASSWORD;
 
 export  default{
     host: process.env.HOST,
     database: process.env.DATABASE,
     user:process.env.USER || "",
-    password: process.env.PASSWORD || ""
+    password: DB_PASSWORD || ""
 }

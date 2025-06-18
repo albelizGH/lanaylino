@@ -1,4 +1,4 @@
-import mysql from "promise-mysql";
+const mysql = require('mysql2/promise');
 
 
 import config from "./../config";
